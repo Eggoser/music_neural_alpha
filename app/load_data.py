@@ -7,12 +7,9 @@ import math
 import librosa
 import librosa.display
 import matplotlib.pyplot as plt
-import pandas as pd
 
 from pydub import AudioSegment
 from PIL import Image
-from keras.utils import np_utils
-from sklearn.model_selection import train_test_split
 
 
 class ParseController:
@@ -20,18 +17,18 @@ class ParseController:
         self.filename_metadata = "Dataset/fma_metadata/tracks.csv"
         self.folder_tracks = "Dataset/fma_small"
         self.folder_tracks_test = "Dataset/YandexTracks"
-
+        #
         self.template_folder_firstly = "Test_Spectogram_Images"
         self.template_folder_secondfly = "Test_Sliced_Images"
-
+        #
         self.channels = 1
         self.frequency = 44100
         self.frame_width = 2
-
-
+        #
+        #
     def _create_plot(self, f):
         sound = AudioSegment.from_mp3(f)
-
+        #
         # поменяем параметры трека на нужные нам
         if sound.channels != self.channels:
             sound = sound.set_channels(self.channels)
@@ -39,12 +36,12 @@ class ParseController:
             sound = sound.set_frame_rate(self.frequency)
         if sound.frame_width != self.frame_width:
             sound = sound.set_frame_width(self.frame_width)
-
+        #
         # распакуем байты в числа
         y = np.asarray([struct.unpack("h", sound.raw_data[i:i+self.frame_width])[0]
                         for i in range(0, len(sound.raw_data), self.frame_width)]).astype("float32")
         y /= 2 ** 15
-
+        #
         # y, sr = librosa.load(f)
         melspectrogram_array = librosa.feature.melspectrogram(y=y, sr=self.frequency, n_mels=128, fmax=8000)
         mel = librosa.power_to_db(melspectrogram_array)
@@ -71,10 +68,12 @@ class ParseController:
 
         for f in [os.path.join(self.folder_tracks_test, f) for f in os.listdir(self.folder_tracks_test) if f.endswith(".mp3")]:
             test_id = re.search('Dataset/YandexTracks/(.+?).mp3', f).group(1)
+            filename = folder_output + "/" + test_id + ".jpg"
             # главная функция, которая занимается преобразованием
-            self._create_plot(f)
-            plt.savefig(folder_output + "/" + test_id + ".jpg", bbox_inches=None, pad_inches=0)
-            plt.close()
+            if not os.path.isfile(filename):
+                self._create_plot(f)
+                plt.savefig(filename, bbox_inches=None, pad_inches=0)
+                plt.close()
 
 
     def secondly(self):
