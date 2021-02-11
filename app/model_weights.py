@@ -8,6 +8,7 @@ from load_data import load_dataset
 import cv2
 import json
 import io
+import os
 
 import librosa
 import librosa.display
@@ -87,6 +88,7 @@ class Controller:
         return np.asarray(crops)
 
     def update_dataset(self):
+        count_all_images = len(os.listdir("Test_Sliced_Images"))
         # images, labels = load_dataset()
         # images = np.expand_dims(images, axis=3) / 255
         output = load_dataset()
@@ -107,7 +109,7 @@ class Controller:
             predictions[label]["count"] += 1
 
             image_count += 1
-            print("[+] prediction", image_count)
+            print(f"[+] prediction {round(image_count / count_all_images * 100, 2)}%")
 
         for i in predictions:
             predictions[i] = (predictions[i]["prediction"] / predictions[i]["count"]).tolist()
