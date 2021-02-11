@@ -94,7 +94,7 @@ class Controller:
         
         for image, label in zip(images, labels):
             prediction = self.model.predict(np.expand_dims(image, axis=0))
-
+            print("[+] prediction")
             if label not in predictions:
                 predictions[label] = {"prediction": prediction, "count": 0}
                 continue
@@ -141,9 +141,9 @@ class Controller:
 
 
 obj = Controller()
-# obj.update_dataset()
+obj.update_dataset()
 
-with open("Dataset/YandexTracks/Выдыхай.mp3", "rb") as log:
-    data = log.read()
+# with open("Dataset/YandexTracks/Выдыхай.mp3", "rb") as log:
+#     data = log.read()
 
-obj.predict(data)
+# obj.predict(data)

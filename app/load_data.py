@@ -70,6 +70,7 @@ class ParseController:
             test_id = re.search('Dataset/YandexTracks/(.+?).mp3', f).group(1)
             filename = folder_output + "/" + test_id + ".jpg"
             # главная функция, которая занимается преобразованием
+            print(filename)
             if not os.path.isfile(filename):
                 self._create_plot(f)
                 plt.savefig(filename, bbox_inches=None, pad_inches=0)
@@ -99,6 +100,7 @@ class ParseController:
             subsample_size = 128
             width, height = img.size
             number_of_samples = width // subsample_size
+            print(f)
             for i in range(number_of_samples):
                 start = i * subsample_size
                 img_temporary = img.crop((start, 0., start + subsample_size, subsample_size))
