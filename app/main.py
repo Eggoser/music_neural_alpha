@@ -6,13 +6,14 @@ from time import sleep
 from . import db
 from .models import User
 from .model_weights import Controller, base_dir
+import random
 
 main = Blueprint('main', __name__)
 model = Controller()
 tracks_dict = model.get_labels()
 
 
-MAX_TRACK_COUNT = 10
+MAX_TRACK_COUNT = 50
 
 
 @main.route("/", methods=["GET", "POST"])
@@ -23,7 +24,6 @@ def main_page():
 		if not file:
 			return "Выберите файл"
 
-
 		data = BytesIO()
 		file.save(data)
 
@@ -31,7 +31,7 @@ def main_page():
 		print(result)
 		
 		local_tracks = []
-		for _, row in zip(range(MAX_TRACK_COUNT), result):
+		for _, row in zip(range(MAX_TRACK_COUNT), result[random.randint(0, 1000):]):
 			label_value, value = row
 			label_data = tracks_dict[label_value]
 
