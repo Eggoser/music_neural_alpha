@@ -1,5 +1,6 @@
 /**/__pycache__
 /venv
+/app/Dataset/*
 /app/Dataset
 /app/Test_Sliced_Images
 /app/Test_Spectogram_Images

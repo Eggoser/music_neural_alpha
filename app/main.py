@@ -1,11 +1,11 @@
-from flask import Blueprint, request, render_template, redirect, url_for
+from flask import Blueprint, request, render_template, redirect, url_for, send_file
 from flask_login import login_user, login_required, logout_user
 from werkzeug.security import check_password_hash
 from io import BytesIO
 from time import sleep
 from . import db
 from .models import User
-from .model_weights import Controller
+from .model_weights import Controller, base_dir
 
 main = Blueprint('main', __name__)
 model = Controller()
@@ -36,24 +36,25 @@ def main_page():
 			label_data = tracks_dict[label_value]
 
 			local_tracks.append({
-				# "title": label_data["title"],
-				"title": label_value,
+				# "title": label_value,
+				"title": label_data["title"],
 				"author": label_data["author"],
-				"yandex_link": "https://yandex.ru/track/{}".format(label_data["track_id"]),
+				"yandex_link": "https://music.yandex.ru/track/{}".format(label_data["track_id"]),
 				"percent": str(round(value * 100, 2)) + "%",
-				"link": "https://music.yandex.ru/album/12323/track/1232"
+				"link": url_for("main.download", _external=True, uid=label_value)
 			})
 
 		return render_template("index.html", tracks=enumerate(local_tracks, start=1))
 	return render_template("index.html")
 
 
-@main.route("/download")
+@main.route("/download/<uid>")
 def download(uid):
 	if tracks_dict.get(uid):
-		tracks_dict[uid]
+		filename = uid + ".mp3"
+		return send_file(base_dir / "Dataset/YandexTracks" / filename, attachment_filename=tracks_dict[uid]["title"] + ".mp3", as_attachment=True)
 
-	return "hello"
+	return "error"
 
 
 @main.route("/logout")
