@@ -93,17 +93,21 @@ class Controller:
 
         predictions = {}
 
+        image_count = 0
+
         for image, label in load_dataset():
             image = np.expand_dims(image, axis=2) / 255
             prediction = self.model.predict(np.expand_dims(image, axis=0))
             
             if label not in predictions:
-                print("[+] prediction")
                 predictions[label] = {"prediction": prediction, "count": 0}
                 continue
 
             predictions[label]["prediction"] += prediction
             predictions[label]["count"] += 1
+
+            image_count += 1
+            print("[+] prediction", image_count)
 
         for i in predictions:
             predictions[i] = (predictions[i]["prediction"] / predictions[i]["count"]).tolist()
