@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<style type="text/css">
+	.text-padding-table {
+		padding: .375rem .75rem;
+		font-size: 1rem;
+		display: inline-block;
+		border: 1px solid transparent;
+	}
+	.td-center {
+		text-align: center
+	}
+</style>
+{% endblock %}
+{% block title %}hello world{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+	<form method="POST" action="/auth">
+		<div class="form-group">
+			<div class="custom-file" id="customFile">
+				<input type="file" class="custom-file-input" id="exampleInputFile" aria-describedby="fileHelp">
+				<label class="custom-file-label" for="exampleInputFile">Select file...</label>
+			</div>
+		</div>
+		
+		<button type="submit" class="btn btn-primary">Отправить</button>
+	</form>
+
+	<table class="table table-bordered table-striped mt-5">
+		<thead class="thead-light">
+			<tr>
+				<th scope="col">#</th>
+				<th scope="col">Название</th>
+				<th scope="col">Исполнитель</th>
+				<th scope="col">Трек на Яндекс.Музыке</th>
+				<th scope="col">Скачать с нашего сайта</th>
+				<th scope="col">Вывод нейросети</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for key, i in tracks %}
+			<tr>
+				<th scope="row"><span class="text-padding-table">{{ key }}</span></th>
+				<td><span class="text-padding-table">{{ i.title }}</span></td>
+				<td><span class="text-padding-table">{{ i.author }}</span></td>
+				<td class="td--center"><a class="btn text-primary" href="{{ i.yandex_link }}">Открыть</a></td>
+				<td class="td--center"><a class="btn text-success" href="{{ i.link }}">Скачать</a></td>
+				<td><span class="text-padding-table">{{ i.percent }}</span></td>
+			</tr>
+<!-- 			<tr>
+				<th scope="row">1</th>
+				<td>Mark</td>
+				<td>Otto</td>
+				<td>@mdo</td>
+			</tr>
+			<tr>
+				<th scope="row">2</th>
+				<td>Jacob</td>
+				<td>Thornton</td>
+				<td>@fat</td>
+			</tr>
+			<tr>
+				<th scope="row">3</th>
+				<td colspan="2">Larry the Bird</td>
+				<td>@twitter</td>
+			</tr> -->
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% endblock %}

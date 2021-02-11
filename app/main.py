@@ -9,7 +9,7 @@ main = Blueprint('main', __name__)
 @main.route("/")
 @login_required
 def main_page():
-	return "hello world"
+	return render_template("index.html", tracks=enumerate([{"title": "Cristal & МОЁТ", "author": "MORGENSHTERN", "percent": "74.4%", "yandex_link": "https://music.yandex.ru/album/12323/track/1232", "link": "https://music.yandex.ru"}], start=1))
 
 @main.route('/logout')
 def logout():

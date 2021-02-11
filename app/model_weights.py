@@ -87,15 +87,18 @@ class Controller:
         return np.asarray(crops)
 
     def update_dataset(self):
-        images, labels = load_dataset()
-        images = np.expand_dims(images, axis=3) / 255
+        # images, labels = load_dataset()
+        # images = np.expand_dims(images, axis=3) / 255
+        output = load_dataset()
 
         predictions = {}
-        
-        for image, label in zip(images, labels):
+
+        for image, label in load_dataset():
+            image = np.expand_dims(image, axis=2) / 255
             prediction = self.model.predict(np.expand_dims(image, axis=0))
-            print("[+] prediction")
+            
             if label not in predictions:
+                print("[+] prediction")
                 predictions[label] = {"prediction": prediction, "count": 0}
                 continue
 
