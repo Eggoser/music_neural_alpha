@@ -103,18 +103,15 @@ class Controller:
 
     def update_dataset(self):
         create_dataset()
-        images, labels = load_dataset()
-        images = np.expand_dims(images, axis=3)
-        # Normalize the image.
-        images = images / 255.
+        output = load_dataset()
         count_all_images = len(os.listdir(base_dir / "Test_Sliced_Images"))
 
         predictions = {}
 
         image_count = 0
 
-        for image, label in zip(images, labels):
-            # image = np.expand_dims(image, axis=2) / 255.
+        for image, label in load_dataset():
+            image = np.expand_dims(image, axis=2) / 255.
             prediction = self.model.predict(np.expand_dims(image, axis=0))
 
             if label not in predictions:

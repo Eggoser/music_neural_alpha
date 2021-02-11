@@ -111,17 +111,14 @@ def create_dataset():
 def load_dataset():
     filenames = [os.path.join("Test_Sliced_Images", f) for f in os.listdir("Test_Sliced_Images") if f.endswith(".jpg")]
 
-
-    images = []
-    labels = []
     for f in filenames:
         song_variable = re.search('Test_Sliced_Images/.*_(.+?).jpg', f).group(1)
         tempImg = cv2.imread(f, cv2.IMREAD_UNCHANGED)
-        images.append(cv2.cvtColor(tempImg, cv2.COLOR_BGR2GRAY))
-        labels.append(song_variable)
-        # yield cv2.cvtColor(tempImg, cv2.COLOR_BGR2GRAY), song_variable
+        # images.append(cv2.cvtColor(tempImg, cv2.COLOR_BGR2GRAY))
+        # labels.append(song_variable)
+        yield cv2.cvtColor(tempImg, cv2.COLOR_BGR2GRAY), song_variable
 
-    images = np.asarray(images)
+    # images = np.asarray(images)
 
-    return images, labels
+    # return images, labels
 
