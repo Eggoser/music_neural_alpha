@@ -11,23 +11,57 @@
 	.td-center {
 		text-align: center
 	}
+	.loader {
+		border: 16px solid #f3f3f3;
+		border-radius: 50%;
+		border-top: 16px solid #3498db;
+		width: 120px;
+		height: 120px;
+		animation: spin 2s linear infinite;
+	}
+
+	@keyframes spin {
+	  0% { transform: rotate(0deg); }
+	  100% { transform: rotate(360deg); }
+	}
+
+	.loader-parent {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		z-index: 9999999;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, .35);
+		position: fixed;
+	}
+
+	.loader-child {
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+	}
 </style>
 {% endblock %}
 {% block title %}hello world{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-	<form method="POST" action="/auth">
+<div class="container mt-5" id="first">
+	<form method="POST" action="/" id="form" enctype="multipart/form-data">
 		<div class="form-group">
 			<div class="custom-file" id="customFile">
-				<input type="file" class="custom-file-input" id="exampleInputFile" aria-describedby="fileHelp">
-				<label class="custom-file-label" for="exampleInputFile">Select file...</label>
+				<input type="file" name="file" class="custom-file-input" id="exampleInputFile" aria-describedby="fileHelp">
+				<label class="custom-file-label" for="exampleInputFile" aria-describedby="fileHunt">Выберите файл</label>
+				<small id="fileHunt" class="form-text text-muted">Файл должен быть в формате MP3.</small>
 			</div>
 		</div>
 		
 		<button type="submit" class="btn btn-primary">Отправить</button>
 	</form>
 
+	{% if tracks %}
 	<table class="table table-bordered table-striped mt-5">
 		<thead class="thead-light">
 			<tr>
@@ -41,33 +75,32 @@
 		</thead>
 		<tbody>
 			{% for key, i in tracks %}
-			<tr>
-				<th scope="row"><span class="text-padding-table">{{ key }}</span></th>
-				<td><span class="text-padding-table">{{ i.title }}</span></td>
-				<td><span class="text-padding-table">{{ i.author }}</span></td>
-				<td class="td--center"><a class="btn text-primary" href="{{ i.yandex_link }}">Открыть</a></td>
-				<td class="td--center"><a class="btn text-success" href="{{ i.link }}">Скачать</a></td>
-				<td><span class="text-padding-table">{{ i.percent }}</span></td>
-			</tr>
-<!-- 			<tr>
-				<th scope="row">1</th>
-				<td>Mark</td>
-				<td>Otto</td>
-				<td>@mdo</td>
-			</tr>
-			<tr>
-				<th scope="row">2</th>
-				<td>Jacob</td>
-				<td>Thornton</td>
-				<td>@fat</td>
-			</tr>
-			<tr>
-				<th scope="row">3</th>
-				<td colspan="2">Larry the Bird</td>
-				<td>@twitter</td>
-			</tr> -->
+				<tr>
+					<th scope="row"><span class="text-padding-table">{{ key }}</span></th>
+					<td><span class="text-padding-table">{{ i.title }}</span></td>
+					<td><span class="text-padding-table">{{ i.author }}</span></td>
+					<td class="td--center"><a class="btn text-primary" href="{{ i.yandex_link }}">Открыть</a></td>
+					<td class="td--center"><a class="btn text-success" href="{{ i.link }}">Скачать</a></td>
+					<td><span class="text-padding-table">{{ i.percent }}</span></td>
+				</tr>
 			{% endfor %}
 		</tbody>
 	</table>
+	{% endif %}
 </div>
+{% endblock %}
+
+
+{% block script %}
+<script type="text/javascript">
+	const form = document.getElementById("form");
+
+	form.addEventListener('submit', function(e){
+		loaderParent = document.createElement("div");
+		loaderParent.innerHTML = '<div class="loader-child"><div class="mb-3"><h2 class="text-white">Нейросеть думает, не обновляйте страницу</h2></div><div class="loader"></div></div>';
+		loaderParent.classList.add("loader-parent");
+		document.body.insertBefore(loaderParent, document.getElementById("first"));
+		// e.preventDefault();
+	})
+</script>
 {% endblock %}

@@ -1,8 +1,9 @@
 /**/__pycache__
 /venv
-app/Dataset/YandexTracks/*
+/app/Dataset
 /app/Test_Sliced_Images
 /app/Test_Spectogram_Images
 /app/yamusic
+app/Saved_Model/outputs.json
 **/.DS_Store
 /.idea

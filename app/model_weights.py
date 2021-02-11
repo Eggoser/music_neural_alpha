@@ -1,27 +1,41 @@
-__import__("os").environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+import os
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+__import__("matplotlib").use('Agg')
 
 import numpy as np
-# import keras
 import struct
 from keras.models import Model, load_model
-from load_data import load_dataset
+
 import cv2
 import json
 import io
-import os
+from pathlib import PurePath
 
 import librosa
 import librosa.display
+
+
 import matplotlib.pyplot as plt
+
 from pydub import AudioSegment
 from PIL import Image
 
+
+if __name__ == '__main__':
+    from load_data import load_dataset, create_dataset
+else:
+    from .load_data import load_dataset, create_dataset
+
+
+
+base_dir = PurePath(__file__).parent
 
 
 class Controller:
     def __init__(self):
         # подготовим модель
-        loaded_model = load_model("Saved_Model/Model.h5")
+        loaded_model = load_model(base_dir / "Saved_Model/Model.h5")
         loaded_model.set_weights(loaded_model.get_weights())
 
         self.matrix_size = loaded_model.layers[-2].output.shape[1]
@@ -32,11 +46,11 @@ class Controller:
         self.channels = 1
         self.frequency = 44100
         self.frame_width = 2
-        #
-        #
+
+
     def create_plot(self, f):
-        sound = AudioSegment.from_mp3(io.BytesIO(f))
-        #
+        sound = AudioSegment.from_mp3(f)
+
         # поменяем параметры трека на нужные нам
         if sound.channels != self.channels:
             sound = sound.set_channels(self.channels)
@@ -44,12 +58,12 @@ class Controller:
             sound = sound.set_frame_rate(self.frequency)
         if sound.frame_width != self.frame_width:
             sound = sound.set_frame_width(self.frame_width)
-        #
+
         # распакуем байты в числа
         y = np.asarray([struct.unpack("h", sound.raw_data[i:i+self.frame_width])[0]
                         for i in range(0, len(sound.raw_data), self.frame_width)]).astype("float32")
         y /= 2 ** 15
-        #
+
         # y, sr = librosa.load(f)
         melspectrogram_array = librosa.feature.melspectrogram(y=y, sr=self.frequency, n_mels=128, fmax=8000)
         mel = librosa.power_to_db(melspectrogram_array)
@@ -88,21 +102,20 @@ class Controller:
         return np.asarray(crops)
 
     def update_dataset(self):
-        count_all_images = len(os.listdir("Test_Sliced_Images"))
-        # images, labels = load_dataset()
-        # images = np.expand_dims(images, axis=3) / 255
+        create_dataset()
         output = load_dataset()
+        count_all_images = len(os.listdir(base_dir / "Test_Sliced_Images"))
 
         predictions = {}
 
         image_count = 0
 
         for image, label in load_dataset():
-            image = np.expand_dims(image, axis=2) / 255
+            image = np.expand_dims(image, axis=2) / 255.
             prediction = self.model.predict(np.expand_dims(image, axis=0))
-            
+
             if label not in predictions:
-                predictions[label] = {"prediction": prediction, "count": 0}
+                predictions[label] = {"prediction": prediction, "count": 1}
                 continue
 
             predictions[label]["prediction"] += prediction
@@ -114,7 +127,7 @@ class Controller:
         for i in predictions:
             predictions[i] = (predictions[i]["prediction"] / predictions[i]["count"]).tolist()
 
-        with open("Saved_Model/outputs.json", "w") as log:
+        with open(base_dir / "Saved_Model/outputs.json", "w") as log:
             log.write(json.dumps(predictions, ensure_ascii=False))
 
 
@@ -129,30 +142,48 @@ class Controller:
 
 
         if not self.predictions_global:
-            with open("Saved_Model/outputs.json") as log:
+            with open(base_dir / "Saved_Model/outputs.json") as log:
                 self.predictions_global = {i: np.asarray(k) for i, k in json.loads(log.read()).items()}
 
 
         distance_array = []
-        for _, second in self.predictions_global.items():
+        label_array = []
+        for label, second in self.predictions_global.items():
             distance_array.append(np.sum(first * second) / (np.sqrt(np.sum(first**2)) * np.sqrt(np.sum(second**2))))
+            label_array.append(label)
 
         distance_array = np.asarray(distance_array)
         
 
-        recommendations = 100
-        for _ in range(recommendations):
+        distance_and_labels = []
+        for _ in range(len(distance_array)):
             index = np.argmax(distance_array)
-            value = distance_array[index]
-            print("Song Name: with value = %f" % (value))
+            distance_and_labels.append((label_array[index], distance_array[index]))
             distance_array[index] = -np.inf
-            # recommendations =+ 1
+
+        return distance_and_labels
+
+    def get_labels(self):
+        with open(base_dir / "Dataset/tracks_info.json") as log:
+            data = json.loads(log.read())
+
+        return data
 
 
-obj = Controller()
-obj.update_dataset()
+
+if __name__ == '__main__':
+    obj = Controller()
+    obj.update_dataset()
 
 # with open("Dataset/YandexTracks/Выдыхай.mp3", "rb") as log:
 #     data = log.read()
 
 # obj.predict(data)
+
+
+# def fast_add_count():
+#     import json
+#     with open("Saved_Model/outputs.json") as log:
+#         data = json.loads(log.read())
+#     with open("Saved_Model/outputs.json", "w") as log:
+#         data = 

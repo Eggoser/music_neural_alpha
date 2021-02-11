@@ -17,18 +17,16 @@ class ParseController:
         self.filename_metadata = "Dataset/fma_metadata/tracks.csv"
         self.folder_tracks = "Dataset/fma_small"
         self.folder_tracks_test = "Dataset/YandexTracks"
-        #
+
         self.template_folder_firstly = "Test_Spectogram_Images"
         self.template_folder_secondfly = "Test_Sliced_Images"
-        #
+
         self.channels = 1
         self.frequency = 44100
         self.frame_width = 2
-        #
-        #
     def _create_plot(self, f):
         sound = AudioSegment.from_mp3(f)
-        #
+
         # поменяем параметры трека на нужные нам
         if sound.channels != self.channels:
             sound = sound.set_channels(self.channels)
@@ -36,12 +34,12 @@ class ParseController:
             sound = sound.set_frame_rate(self.frequency)
         if sound.frame_width != self.frame_width:
             sound = sound.set_frame_width(self.frame_width)
-        #
+
         # распакуем байты в числа
         y = np.asarray([struct.unpack("h", sound.raw_data[i:i+self.frame_width])[0]
                         for i in range(0, len(sound.raw_data), self.frame_width)]).astype("float32")
         y /= 2 ** 15
-        #
+
         # y, sr = librosa.load(f)
         melspectrogram_array = librosa.feature.melspectrogram(y=y, sr=self.frequency, n_mels=128, fmax=8000)
         mel = librosa.power_to_db(melspectrogram_array)
@@ -104,14 +102,13 @@ class ParseController:
                 img_temporary.save(folder_output + "/" + str(counter) + "_" + song_variable + ".jpg")
                 counter += 1
 
-
-
-def load_dataset():
+def create_dataset():
     control = ParseController()
     control.firstly()
     control.secondly()
 
 
+def load_dataset():
     filenames = [os.path.join("Test_Sliced_Images", f) for f in os.listdir("Test_Sliced_Images") if f.endswith(".jpg")]
 
     for f in filenames:
