@@ -25,7 +25,7 @@ images = np.expand_dims(images, axis=3)
 images = images / 255.
 # Display list of available test songs.
 print(np.unique(labels))
-# print(images.shape)
+
 # Enter a song name which will be an anchor song.
 recommend_wrt = input("Enter Song name: ")
 print("Loading...")
