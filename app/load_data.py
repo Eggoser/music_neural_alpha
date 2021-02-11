@@ -59,10 +59,7 @@ class ParseController:
         folder_output = self.template_folder_firstly
 
 
-        if os.path.exists(folder_output):
-            if len(os.listdir(folder_output)):
-                return
-        else:
+        if not os.path.exists(folder_output):
             os.makedirs(folder_output)
 
 
