@@ -49,12 +49,13 @@
 
 {% block body %}
 <div class="container mt-5" id="first">
+	<h4 class="mb-3 ml-0">Отправьте ваш любимый музыкальный трек в нейросеть</h4>
 	<form method="POST" action="/" id="form" enctype="multipart/form-data">
 		<div class="form-group">
 			<div class="custom-file" id="customFile">
 				<input type="file" name="file" class="custom-file-input" id="exampleInputFile" aria-describedby="fileHelp">
 				<label class="custom-file-label" for="exampleInputFile" aria-describedby="fileHunt">Выберите файл</label>
-				<small id="fileHunt" class="form-text text-muted">Файл должен быть в формате MP3.</small>
+				<small id="fileHunt" class="form-text text-muted ml-1">Файл должен быть в формате MP3.</small>
 			</div>
 		</div>
 		
@@ -62,7 +63,9 @@
 	</form>
 
 	{% if tracks %}
-	<table class="table table-bordered table-striped mt-5">
+	<div class="mt-5"></div>
+	<h4>Посмотрите, что для вас приготовила нейросеть</h4>
+	<table class="table table-bordered table-striped mt-4">
 		<thead class="thead-light">
 			<tr>
 				<th scope="col">#</th>

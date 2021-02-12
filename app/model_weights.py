@@ -175,15 +175,3 @@ if __name__ == '__main__':
     obj = Controller()
     obj.update_dataset()
 
-# with open("Dataset/YandexTracks/Выдыхай.mp3", "rb") as log:
-#     data = log.read()
-
-# obj.predict(data)
-
-
-# def fast_add_count():
-#     import json
-#     with open("Saved_Model/outputs.json") as log:
-#         data = json.loads(log.read())
-#     with open("Saved_Model/outputs.json", "w") as log:
-#         data = 

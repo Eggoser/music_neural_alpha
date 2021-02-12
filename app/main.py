@@ -31,14 +31,13 @@ def main_page():
 		print(result)
 		
 		local_tracks = []
-		for _, row in zip(range(MAX_TRACK_COUNT), result[random.randint(0, 1000):]):
+		for _, row in zip(range(MAX_TRACK_COUNT), result):
 			label_value, value = row
 			label_data = tracks_dict.get(label_value)
 
 			if label_data:
 				local_tracks.append({
-					# "title": label_value,
-					"title": label_data["title"],
+					"title": label_value,
 					"author": label_data["author"],
 					"yandex_link": "https://music.yandex.ru/track/{}".format(label_data["track_id"]),
 					"percent": str(round(value * 100, 2)) + "%",
@@ -47,8 +46,8 @@ def main_page():
 			else:
 				local_tracks.append({
 					"title": label_value,
-					"author": "None",
-					"yandex_link": "https://music.yandex.ru/track/{}".format("123123"),
+					"author": "–",
+					"yandex_link": "https://music.yandex.ru/track/123",
 					"percent": str(round(value * 100, 2)) + "%",
 					"link": url_for("main.download", _external=True, uid=label_value)
 				})
@@ -64,6 +63,12 @@ def download(uid):
 		return send_file(base_dir / "Dataset/YandexTracks" / filename, attachment_filename=tracks_dict[uid]["title"] + ".mp3", as_attachment=True)
 
 	return "error"
+
+
+
+@main.route("/static/<path:path>")
+def send_static(path):
+	return send_from_directory('static', path)
 
 
 @main.route("/logout")
