@@ -1,6 +1,7 @@
 import os
 import re
 import struct
+import io
 import numpy as np
 import cv2
 import math
@@ -26,22 +27,10 @@ class ParseController:
         self.frame_width = 2
     def _create_plot(self, f):
         sound = AudioSegment.from_mp3(f)
+        sound.export("test.mp3", format="wav")
 
-        # поменяем параметры трека на нужные нам
-        if sound.channels != self.channels:
-            sound = sound.set_channels(self.channels)
-        if sound.frame_rate != self.frequency:
-            sound = sound.set_frame_rate(self.frequency)
-        if sound.frame_width != self.frame_width:
-            sound = sound.set_frame_width(self.frame_width)
-
-        # распакуем байты в числа
-        y = np.asarray([struct.unpack("h", sound.raw_data[i:i+self.frame_width])[0]
-                        for i in range(0, len(sound.raw_data), self.frame_width)]).astype("float32")
-        y /= 2 ** 15
-
-        # y, sr = librosa.load(f)
-        melspectrogram_array = librosa.feature.melspectrogram(y=y, sr=self.frequency, n_mels=128, fmax=8000)
+        y, sr = librosa.load("test.mp3")
+        melspectrogram_array = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=128, fmax=8000)
         mel = librosa.power_to_db(melspectrogram_array)
         # Length and Width of Spectogram
         fig_size = plt.rcParams["figure.figsize"]
@@ -51,6 +40,8 @@ class ParseController:
         plt.axis('off')
         plt.axes([0., 0., 1., 1.0], frameon=False, xticks=[], yticks=[])
         librosa.display.specshow(mel, cmap='gray_r')
+
+        os.remove("test.mp3")
 
 
     def firstly(self):

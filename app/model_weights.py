@@ -50,24 +50,12 @@ class Controller:
 
     def create_plot(self, f):
         sound = AudioSegment.from_mp3(f)
+        sound.export("test.mp3", format="wav")
 
-        # поменяем параметры трека на нужные нам
-        if sound.channels != self.channels:
-            sound = sound.set_channels(self.channels)
-        if sound.frame_rate != self.frequency:
-            sound = sound.set_frame_rate(self.frequency)
-        if sound.frame_width != self.frame_width:
-            sound = sound.set_frame_width(self.frame_width)
-
-        # распакуем байты в числа
-        y = np.asarray([struct.unpack("h", sound.raw_data[i:i+self.frame_width])[0]
-                        for i in range(0, len(sound.raw_data), self.frame_width)]).astype("float32")
-        y /= 2 ** 15
-
-        # y, sr = librosa.load(f)
-        melspectrogram_array = librosa.feature.melspectrogram(y=y, sr=self.frequency, n_mels=128, fmax=8000)
+        y, sr = librosa.load("test.mp3")
+        melspectrogram_array = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=128, fmax=8000)
         mel = librosa.power_to_db(melspectrogram_array)
-        # Length and Width of Spectogram
+
         fig_size = plt.rcParams["figure.figsize"]
         fig_size[0] = float(mel.shape[1]) / float(100)
         fig_size[1] = float(mel.shape[0]) / float(100)
@@ -79,6 +67,8 @@ class Controller:
         output = io.BytesIO()
         plt.savefig(output, bbox_inches=None, pad_inches=0)
         plt.close()
+
+        os.remove("test.mp3")
 
         return output.getvalue()
 
