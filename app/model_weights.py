@@ -135,7 +135,7 @@ class Controller:
         first = np.zeros((1, self.matrix_size))
 
         raw_image = self.create_plot(raw_track)
-        sliced_image = self.slice_image_to_bytes(raw_image)
+        sliced_image = self.slice_image_to_bytes(raw_image) / 255.
         for image in sliced_image:
             first += self.model.predict(np.expand_dims(image, axis=0))
         first /= len(sliced_image)
