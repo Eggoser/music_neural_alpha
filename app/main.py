@@ -37,7 +37,7 @@ def main_page():
 
 			if label_data:
 				local_tracks.append({
-					"title": label_value,
+					"title": label_data["title"],
 					"author": label_data["author"],
 					"yandex_link": "https://music.yandex.ru/track/{}".format(label_data["track_id"]),
 					"percent": str(round(value * 100, 2)) + "%",
