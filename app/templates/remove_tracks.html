@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width,initial-scale=0.75,minimum-scale=0.75,shrink-to-fit=no,user-scalable=yes" name="viewport">
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>You can download tracks here</title>
+    <style>
+        .container {
+            margin-top: 30px;
+        }
+        .modal {
+            position: fixed;
+        }
+        .alert-table {
+            z-index: 99999;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            opacity: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.2);
+            display: none;
+
+            transition: opacity .2s;
+        }
+        .alert-table-cell {
+            height: 100%;
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+        }
+        .alert-message {
+            width: 40%;
+            display: inline-block;
+        }
+        .media {
+            display: inline-flex;
+            margin: 0 !important;
+        }
+    </style>
+    <title>Скрытая страница</title>
+</head>
+<body>
+    <div class="container">
+        <ul class="list-group mt-5" id="main_content">
+            {% for row in rows %}
+                <li class="list-group-item" data-id="{{ row.id }}" data-url="{{ row.url }}">
+                    <button class="btn btn-danger del float-left mr-5" data-id="{{ row.id }}">delete</button>
+
+
+                    <div class="media m-0">
+                        <div class="media-body" style="font-size: 1rem; opacity: 0.85">
+                            <h5 class="mt-0" style="font-size: 1.1rem; margin-bottom: 5px">{{ row.title }}</h5>
+                            {{ row.author }}
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+
+
+
+    </div>
+
+    <script>
+        var element = null;
+        const hideAnimation = function (el) {
+            el.animate({opacity: '0'}, 150, function(){
+                el.animate({height: '0px'}, 150, function(){
+                    el.remove();
+                });
+            });
+        };
+
+        $(".btn.del").on("click", function (e) {
+            element = $(this).parent()
+            console.log(element)
+            console.log({"data-id": element.attr("data-id")})
+            $.ajax({
+                url: "{{ url_for("main.rm_tracks", _external=true) }}",
+                type: "POST",
+                dataType: "json",
+                data: JSON.stringify({"data-id": element.attr("data-id")}),
+                contentType: "application/json",
+                success: successFunc,
+                error: successFunc
+            });
+            $(".btn.del").prop("disabled", true);
+        });
+        const successFunc = function(response){
+            console.log("success");
+            hideAnimation(element);
+            $(".btn.del").prop("disabled", false);
+        }
+    </script>
+</body>
+</html>

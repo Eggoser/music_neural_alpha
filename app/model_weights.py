@@ -160,6 +160,15 @@ class Controller:
         return data
 
 
+    def save_labels(self, data):
+        with open(base_dir / "Dataset/tracks_info.json", "w") as log:
+            data = json.dumps(data, ensure_ascii=False)
+            log.write(data)
+
+
+        return data
+
+
 
 if __name__ == '__main__':
     obj = Controller()

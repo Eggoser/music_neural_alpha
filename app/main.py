@@ -44,13 +44,14 @@ def main_page():
 					"link": url_for("main.download", _external=True, uid=label_value)
 				})
 			else:
-				local_tracks.append({
-					"title": label_value,
-					"author": "–",
-					"yandex_link": "https://music.yandex.ru/track/123",
-					"percent": str(round(value * 100, 2)) + "%",
-					"link": url_for("main.download", _external=True, uid=label_value)
-				})
+				pass
+				# local_tracks.append({
+				# 	"title": label_value,
+				# 	"author": "–",
+				# 	"yandex_link": "https://music.yandex.ru/track/123",
+				# 	"percent": str(round(value * 100, 2)) + "%",
+				# 	"link": url_for("main.download", _external=True, uid=label_value)
+				# })
 
 		return render_template("index.html", tracks=enumerate(local_tracks, start=1))
 	return render_template("index.html")
@@ -75,6 +76,35 @@ def send_static(path):
 def logout():
     logout_user()
     return redirect(url_for("main.authentication"))
+
+
+@main.route("/rm_tracks", methods=["GET", "POST"])
+def rm_tracks():
+	if request.method == "POST":
+		global tracks_dict
+		print(request.json)
+
+		data_remove_id = request.json["data-id"]
+		del tracks_dict[data_remove_id]
+
+		# tracks_dict = model.get_labels()
+		model.save_labels(tracks_dict)
+
+		return "success"
+
+
+	
+	local_tracks = []
+
+	for i, k in tracks_dict.items():
+		local_tracks.append({
+			"id": i,
+			"title": k["title"],
+			"author": k["author"],
+		})
+
+
+	return render_template("remove_tracks.html", rows=local_tracks)
 
 
 @main.route("/auth", methods=["GET", "POST"])
