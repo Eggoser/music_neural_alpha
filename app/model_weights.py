@@ -4,7 +4,6 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 __import__("matplotlib").use('Agg')
 
 import numpy as np
-import struct
 from keras.models import Model, load_model
 
 import cv2
