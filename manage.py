@@ -1,6 +1,13 @@
-from app import create_app
+# from app import create_app
 
-app = create_app()
+# app = create_app()
+
+from flask import flask
+app = Flask(__name__)
+
+@app.route("/")
+def hello():
+	return "hello"
 
 @app.errorhandler(404)
 def error_404(e):
