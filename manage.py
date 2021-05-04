@@ -14,7 +14,7 @@ def error_404(e):
 	# print(dir(e))
 	# print(e)
 	# return "<h2>Ошибка 404, перейдите в корень сайта, должно помочь)</h2>"
-	return str(e.description)
+	return str(e.get_response())
 
 @app.errorhandler(500)
 def error_500(e):
