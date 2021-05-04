@@ -5,6 +5,8 @@
 from flask import Flask
 app = Flask(__name__)
 
+app.config["APPLICATION_ROOT"] = "/music-neural"
+
 @app.route("/")
 def hello():
 	return "hello"
