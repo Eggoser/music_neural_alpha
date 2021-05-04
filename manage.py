@@ -11,9 +11,10 @@ def hello():
 
 @app.errorhandler(404)
 def error_404(e):
-	print(dir(e))
-	print(e)
-	return "<h2>Ошибка 404, перейдите в корень сайта, должно помочь)</h2>"
+	# print(dir(e))
+	# print(e)
+	# return "<h2>Ошибка 404, перейдите в корень сайта, должно помочь)</h2>"
+	return str(dir(e))
 
 @app.errorhandler(500)
 def error_500(e):
